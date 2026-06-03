@@ -126,10 +126,11 @@ public class BookController {
 
     // update book by title using @PutMapping
     @PutMapping("/update/{id}")
-    public String updateBook(@PathVariable long id, @RequestBody Book updatedBook) {
+    public String updateBook(@PathVariable long id, @RequestBody BookRequest bookRequest) {
         for (int i = 0; i < books.size(); i++) {
             Book book = books.get(i);
             if (book.getId() == id) {
+                Book updatedBook = convertToBook(id, bookRequest);
                 books.set(i, updatedBook);
                 return "Book updated successfully";
             }
