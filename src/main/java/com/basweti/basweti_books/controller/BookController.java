@@ -107,15 +107,18 @@ public class BookController {
     // Create Book Using Non-matching Title
     @PostMapping("/non-matching")
     public String createBookWithNonMatchingTitle(@RequestBody BookRequest bookRequest) {
-        long id;
+        // long id;
 
-        if (books.isEmpty()) {
-            id = 1;
-        } else {
-            id = books.get(books.size() - 1).getId() + 1;
-        }
+        // if (books.isEmpty()) {
+        //     id = 1;
+        // } else {
+        //     id = books.get(books.size() - 1).getId() + 1;
+        // }
 
-        Book newBook = new Book(id, bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategory(), bookRequest.getRating());
+        // use ternary operator to generate id
+        long id = books.isEmpty() ? 1 : books.get(books.size() - 1).getId() + 1;
+
+        Book newBook = convertToBook(id, bookRequest);
         books.add(newBook);
         return "Book created successfully with non-matching title";
     }
@@ -140,6 +143,11 @@ public class BookController {
     public String deleteBook(@PathVariable long id) {
         books.removeIf(book -> book.getId() == id);
         return "Book deleted successfully";
+    }
+
+
+    private Book convertToBook(long id, BookRequest bookRequest) {
+        return new Book(id, bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategory(), bookRequest.getRating());
     }
 
 }
