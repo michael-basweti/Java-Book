@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.basweti.basweti_books.controller.entity.Book;
+import com.basweti.basweti_books.request.BookRequest;
 
 @RestController
 @RequestMapping("/api/books")
@@ -105,15 +106,18 @@ public class BookController {
 
     // Create Book Using Non-matching Title
     @PostMapping("/non-matching")
-    public String createBookWithNonMatchingTitle(@RequestBody Book newBook) {
-        boolean isNewBook = books.stream()
-                .noneMatch(book -> book.getTitle().equalsIgnoreCase(newBook.getTitle()));
-        if (isNewBook) {
-            books.add(newBook);
+    public String createBookWithNonMatchingTitle(@RequestBody BookRequest bookRequest) {
+        long id;
+
+        if (books.isEmpty()) {
+            id = 1;
         } else {
-            return "Book with the same title already exists";
+            id = books.get(books.size() - 1).getId() + 1;
         }
-        return null;
+
+        Book newBook = new Book(id, bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategory(), bookRequest.getRating());
+        books.add(newBook);
+        return "Book created successfully with non-matching title";
     }
 
 
