@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.basweti.basweti_books.controller.entity.Book;
 import com.basweti.basweti_books.request.BookRequest;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -69,7 +72,7 @@ public class BookController {
 
     
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable long id) {
+    public Book getBookById(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
         return books.stream()
                 .filter(book -> book.getId() == id)
                 .findFirst()
@@ -106,7 +109,7 @@ public class BookController {
 
     // Create Book Using Non-matching Title
     @PostMapping("/non-matching")
-    public String createBookWithNonMatchingTitle(@RequestBody BookRequest bookRequest) {
+    public String createBookWithNonMatchingTitle(@Valid @RequestBody BookRequest bookRequest) {
         // long id;
 
         // if (books.isEmpty()) {
@@ -126,7 +129,7 @@ public class BookController {
 
     // update book by title using @PutMapping
     @PutMapping("/update/{id}")
-    public String updateBook(@PathVariable long id, @RequestBody BookRequest bookRequest) {
+    public String updateBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id, @Valid @RequestBody BookRequest bookRequest) {
         for (int i = 0; i < books.size(); i++) {
             Book book = books.get(i);
             if (book.getId() == id) {
@@ -141,7 +144,7 @@ public class BookController {
 
     // delete book by title using @DeleteMapping
     @DeleteMapping("/delete/{id}")
-    public String deleteBook(@PathVariable long id) {
+    public String deleteBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
         books.removeIf(book -> book.getId() == id);
         return "Book deleted successfully";
     }
