@@ -3,8 +3,11 @@ package com.basweti.basweti_books.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+// import org.hibernate.validator.constraints.EAN;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.basweti.basweti_books.controller.entity.Book;
+import com.basweti.basweti_books.entity.Book;
 import com.basweti.basweti_books.request.BookRequest;
+import com.basweti.basweti_books.exception.BookErrorResponse;
+import com.basweti.basweti_books.exception.BookNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -91,7 +96,7 @@ public class BookController {
         return books.stream()
                 .filter(book -> book.getId() == id)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id));
     }
 
 
@@ -178,6 +183,13 @@ public class BookController {
 
     private Book convertToBook(long id, BookRequest bookRequest) {
         return new Book(id, bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategory(), bookRequest.getRating());
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity<BookErrorResponse> handleBookNotFoundException(BookNotFoundException ex) {
+        BookErrorResponse errorResponse = new BookErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
 }

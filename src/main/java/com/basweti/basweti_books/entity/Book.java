@@ -1,4 +1,4 @@
-package com.basweti.basweti_books.controller.entity;
+package com.basweti.basweti_books.entity;
 
 public class Book {
 
