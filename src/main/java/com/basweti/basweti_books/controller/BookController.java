@@ -3,6 +3,7 @@ package com.basweti.basweti_books.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.basweti.basweti_books.controller.entity.Book;
@@ -53,12 +55,14 @@ public class BookController {
     // }
 
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/allbooks")
     public List<Book> getAllBooks() {
         return books;
     }
 
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<Book> getBooks(@RequestParam(required = false) String category) {
         if (category == null) {
@@ -71,6 +75,7 @@ public class BookController {
     }
 
     
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
         return books.stream()
@@ -80,6 +85,7 @@ public class BookController {
     }
 
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/category")
     public List<Book> getBooksByCategory(@RequestParam String category) {
         List<Book> booksByCategory = new ArrayList<>();
@@ -94,22 +100,23 @@ public class BookController {
     // add book by title, author and category
     // @PostMapping("/api/books")
 
-    @PostMapping
-    public void createBook(@RequestBody Book newBook) {
+    // @PostMapping
+    // public void createBook(@RequestBody Book newBook) {
 
-        for (Book book : books) {
-            if (book.getTitle().equalsIgnoreCase(newBook.getTitle())) {
-                return;
-            }
-        }
+    //     for (Book book : books) {
+    //         if (book.getTitle().equalsIgnoreCase(newBook.getTitle())) {
+    //             return;
+    //         }
+    //     }
 
-        books.add(newBook);
-    }
+    //     books.add(newBook);
+    // }
 
 
     // Create Book Using Non-matching Title
-    @PostMapping("/non-matching")
-    public String createBookWithNonMatchingTitle(@Valid @RequestBody BookRequest bookRequest) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/")
+    public String createBook(@Valid @RequestBody BookRequest bookRequest) {
         // long id;
 
         // if (books.isEmpty()) {
@@ -128,6 +135,7 @@ public class BookController {
 
 
     // update book by title using @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update/{id}")
     public String updateBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id, @Valid @RequestBody BookRequest bookRequest) {
         for (int i = 0; i < books.size(); i++) {
@@ -143,6 +151,7 @@ public class BookController {
 
 
     // delete book by title using @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{id}")
     public String deleteBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
         books.removeIf(book -> book.getId() == id);
