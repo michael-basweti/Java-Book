@@ -18,9 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.basweti.basweti_books.controller.entity.Book;
 import com.basweti.basweti_books.request.BookRequest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
+
+@Tag(name = "Books Rest API Endpoints", description = "API for managing books in the collection")
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -55,6 +60,7 @@ public class BookController {
     // }
 
 
+    @Operation(summary = "Get all books", description = "Returns a list of all books in the collection")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/allbooks")
     public List<Book> getAllBooks() {
@@ -62,6 +68,8 @@ public class BookController {
     }
 
 
+    @Operation(summary = "Get all books by category", description = "Return all books by category")
+    @Parameter(name = "category", description = "The category of books to filter by", required = false)
     @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<Book> getBooks(@RequestParam(required = false) String category) {
@@ -75,6 +83,8 @@ public class BookController {
     }
 
     
+    @Operation(summary = "Get book by ID", description = "Return a book by its ID")
+    @Parameter(name = "id", description = "The ID of the book to retrieve", required = true)
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
@@ -85,6 +95,8 @@ public class BookController {
     }
 
 
+    @Operation(summary = "Get books by category", description = "Return all books by category")
+    @Parameter(name = "category", description = "The category of books to filter by", required = true)
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/category")
     public List<Book> getBooksByCategory(@RequestParam String category) {
@@ -114,6 +126,7 @@ public class BookController {
 
 
     // Create Book Using Non-matching Title
+    @Operation(summary = "Create a new book", description = "Creates a new book with the provided details")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/")
     public String createBook(@Valid @RequestBody BookRequest bookRequest) {
@@ -135,6 +148,8 @@ public class BookController {
 
 
     // update book by title using @PutMapping
+    @Operation(summary = "Update an existing book", description = "Updates the details of an existing book identified by its ID")
+    @Parameter(name = "id", description = "The ID of the book to update", required = true)
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update/{id}")
     public String updateBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id, @Valid @RequestBody BookRequest bookRequest) {
@@ -151,6 +166,8 @@ public class BookController {
 
 
     // delete book by title using @DeleteMapping
+    @Operation(summary = "Delete a book", description = "Deletes a book identified by its ID")
+    @Parameter(name = "id", description = "The ID of the book to delete", required = true)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{id}")
     public String deleteBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
