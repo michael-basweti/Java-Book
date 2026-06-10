@@ -194,8 +194,20 @@ public class BookController {
 
     @ExceptionHandler
     public ResponseEntity<BookErrorResponse> handleBookNotFoundException(BookNotFoundException ex) {
-        BookErrorResponse errorResponse = new BookErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), System.currentTimeMillis());
+        BookErrorResponse errorResponse = new BookErrorResponse(
+            HttpStatus.NOT_FOUND.value(), 
+            ex.getMessage(), 
+            System.currentTimeMillis());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<BookErrorResponse> handleBookNotFoundException(Exception ex) {
+        BookErrorResponse errorResponse = new BookErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "Invalid request", 
+            System.currentTimeMillis());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
 }
