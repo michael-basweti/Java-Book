@@ -157,16 +157,16 @@ public class BookController {
     @Parameter(name = "id", description = "The ID of the book to update", required = true)
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/update/{id}")
-    public String updateBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id, @Valid @RequestBody BookRequest bookRequest) {
+    public Book updateBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id, @Valid @RequestBody BookRequest bookRequest) {
         for (int i = 0; i < books.size(); i++) {
             Book book = books.get(i);
             if (book.getId() == id) {
                 Book updatedBook = convertToBook(id, bookRequest);
                 books.set(i, updatedBook);
-                return "Book updated successfully";
+                return updatedBook;
             }
         }
-        return "Book not found";
+        throw new BookNotFoundException("Book not found with ID: " + id);
     }
 
 
@@ -176,6 +176,12 @@ public class BookController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{id}")
     public String deleteBook(@PathVariable @Min(value = 1, message = "ID must be a positive integer") long id) {
+
+        books.stream()
+                .filter(book -> book.getId() == id)
+                .findFirst()
+                .orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id));
+
         books.removeIf(book -> book.getId() == id);
         return "Book deleted successfully";
     }
