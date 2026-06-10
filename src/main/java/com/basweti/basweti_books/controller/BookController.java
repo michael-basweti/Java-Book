@@ -5,9 +5,7 @@ import java.util.List;
 
 // import org.hibernate.validator.constraints.EAN;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.basweti.basweti_books.entity.Book;
 import com.basweti.basweti_books.request.BookRequest;
-import com.basweti.basweti_books.exception.BookErrorResponse;
 import com.basweti.basweti_books.exception.BookNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -191,23 +188,5 @@ public class BookController {
         return new Book(id, bookRequest.getTitle(), bookRequest.getAuthor(), bookRequest.getCategory(), bookRequest.getRating());
     }
 
-
-    @ExceptionHandler
-    public ResponseEntity<BookErrorResponse> handleBookNotFoundException(BookNotFoundException ex) {
-        BookErrorResponse errorResponse = new BookErrorResponse(
-            HttpStatus.NOT_FOUND.value(), 
-            ex.getMessage(), 
-            System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<BookErrorResponse> handleBookNotFoundException(Exception ex) {
-        BookErrorResponse errorResponse = new BookErrorResponse(
-            HttpStatus.BAD_REQUEST.value(),
-            "Invalid request", 
-            System.currentTimeMillis());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
 
 }
